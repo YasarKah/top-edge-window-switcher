@@ -1,0 +1,9 @@
+{
+  "name": "Top Bar Scroll Switcher",
+  "description": "Scroll in the top strip of any monitor to cycle through the windows that cover that monitor.",
+  "uuid": "topbarscrollswitcher@yasarkah.github.com",
+  "settings-schema": "org.gnome.shell.extensions.topbarscrollswitcher",
+  "gettext-domain": "topbarscrollswitcher",
+  "shell-version": ["46", "47", "48", "49", "50"],
+  "version": 1
+}
