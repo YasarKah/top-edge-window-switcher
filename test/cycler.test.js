@@ -213,3 +213,68 @@ test('invertDirection reverses which way scrolling walks', () => {
     const windows = [win(1, 0), win(2, 0), win(3, 0)];
     assertEqual(c.handleScroll({ monitorIndex: 0, direction: 1, delta: 0, windows, focusedId: 2 }).window.id, 1);
 });
+
+test('smooth deltas below the threshold do nothing', () => {
+    const { c } = clockCycler();
+    const windows = [win(1, 0), win(2, 0), win(3, 0)];
+    assertNull(c.handleScroll({ monitorIndex: 0, direction: 0, delta: 0.4, windows, focusedId: 1 }));
+    assertNull(c.handleScroll({ monitorIndex: 0, direction: 0, delta: 0.4, windows, focusedId: 1 }));
+});
+
+test('an accumulated smooth delta fires exactly one step', () => {
+    const { c } = clockCycler();
+    const windows = [win(1, 0), win(2, 0), win(3, 0)];
+    c.handleScroll({ monitorIndex: 0, direction: 0, delta: 0.4, windows, focusedId: 1 });
+    c.handleScroll({ monitorIndex: 0, direction: 0, delta: 0.4, windows, focusedId: 1 });
+    const r = c.handleScroll({ monitorIndex: 0, direction: 0, delta: 0.4, windows, focusedId: 1 });
+    assertEqual(r.window.id, 2);
+});
+
+test('the smooth accumulator resets after firing', () => {
+    const { c } = clockCycler();
+    const windows = [win(1, 0), win(2, 0), win(3, 0)];
+    for (let i = 0; i < 3; i++)
+        c.handleScroll({ monitorIndex: 0, direction: 0, delta: 0.4, windows, focusedId: 1 });
+    assertNull(c.handleScroll({ monitorIndex: 0, direction: 0, delta: 0.4, windows, focusedId: 2 }));
+});
+
+test('a negative smooth delta steps the other way', () => {
+    const { c } = clockCycler();
+    const windows = [win(1, 0), win(2, 0), win(3, 0)];
+    c.handleScroll({ monitorIndex: 0, direction: 0, delta: -0.6, windows, focusedId: 1 });
+    const r = c.handleScroll({ monitorIndex: 0, direction: 0, delta: -0.6, windows, focusedId: 1 });
+    assertEqual(r.window.id, 3);
+});
+
+test('a zero direction with zero delta does nothing', () => {
+    const { c } = clockCycler();
+    const windows = [win(1, 0), win(2, 0), win(3, 0)];
+    assertNull(c.handleScroll({ monitorIndex: 0, direction: 0, delta: 0, windows, focusedId: 1 }));
+});
+
+test('debounce rejects a second switch inside switchDebounceMs', () => {
+    const { c, box } = clockCycler();
+    const windows = [win(1, 0), win(2, 0), win(3, 0)];
+    assertEqual(c.handleScroll({ monitorIndex: 0, direction: 1, delta: 0, windows, focusedId: 1 }).window.id, 2);
+    box.t += 50;
+    assertNull(c.handleScroll({ monitorIndex: 0, direction: 1, delta: 0, windows, focusedId: 2 }));
+});
+
+test('a debounced scroll keeps the gesture alive', () => {
+    const { c, box } = clockCycler();
+    const windows = [win(1, 0), win(2, 0), win(3, 0)];
+    assertEqual(c.handleScroll({ monitorIndex: 0, direction: 1, delta: 0, windows, focusedId: 1 }).window.id, 2);
+    box.t += 50;
+    assertNull(c.handleScroll({ monitorIndex: 0, direction: 1, delta: 0, windows, focusedId: 2 }));
+    box.t += 100;
+    // Jest hala canli oldugu icin fotograf korunur ve yurume 2'den devam eder.
+    assertEqual(c.handleScroll({ monitorIndex: 0, direction: 1, delta: 0, windows, focusedId: 2 }).window.id, 3);
+});
+
+test('debounce never blocks the first scroll of a gesture', () => {
+    const { c, box } = clockCycler();
+    const windows = [win(1, 0), win(2, 0), win(3, 0)];
+    assertEqual(c.handleScroll({ monitorIndex: 0, direction: 1, delta: 0, windows, focusedId: 1 }).window.id, 2);
+    box.t += 5000;
+    assertEqual(c.handleScroll({ monitorIndex: 0, direction: 1, delta: 0, windows, focusedId: 2 }).window.id, 3);
+});
