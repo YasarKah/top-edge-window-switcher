@@ -15,7 +15,9 @@ yeniden açmak gerekir.
 
 ## Test
 
-    make test
+    make check      # birim testleri + prefs.js dogrulamasi
+    make test       # yalnizca birim testleri (Shell gerekmez)
+    make prefs-check  # prefs.js'i gercekten insa eder (Xvfb altinda, hermetik)
 
 ## Bilinen davranış
 

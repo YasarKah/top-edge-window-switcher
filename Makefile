@@ -1,7 +1,7 @@
 UUID   = topbarscrollswitcher@yasarkah.github.com
 EXTDIR = $(HOME)/.local/share/gnome-shell/extensions/$(UUID)
 
-.PHONY: test schemas install uninstall log
+.PHONY: test prefs-check check schemas install uninstall log
 
 test:
 	gjs -m test/run.js
@@ -22,3 +22,8 @@ uninstall:
 
 log:
 	journalctl -f -o cat /usr/bin/gnome-shell
+
+prefs-check: schemas
+	./test/prefs-check.sh
+
+check: test prefs-check
