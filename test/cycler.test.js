@@ -167,3 +167,49 @@ test('fewer than two candidates does nothing', () => {
     assertNull(c.handleScroll({ monitorIndex: 0, direction: 1, delta: 0, windows: [], focusedId: null }));
     assertNull(c.handleScroll({ monitorIndex: 0, direction: 1, delta: 0, windows: [win(1, 0)], focusedId: 1 }));
 });
+
+test('wrapping forward past the end lands on the first window', () => {
+    const { c, box } = clockCycler();
+    const windows = [win(1, 0), win(2, 0), win(3, 0)];
+    assertEqual(c.handleScroll({ monitorIndex: 0, direction: 1, delta: 0, windows, focusedId: 3 }).window.id, 1);
+    box.t += 200;
+    assertEqual(c.handleScroll({ monitorIndex: 0, direction: 1, delta: 0, windows, focusedId: 1 }).window.id, 2);
+});
+
+test('wrapping backward past the start lands on the last window', () => {
+    const { c } = clockCycler();
+    const windows = [win(1, 0), win(2, 0), win(3, 0)];
+    assertEqual(c.handleScroll({ monitorIndex: 0, direction: -1, delta: 0, windows, focusedId: 1 }).window.id, 3);
+});
+
+test('without wrapAround the walk saturates at the end and reports no switch', () => {
+    const config = defaultConfig();
+    config.wrapAround = false;
+    const { c } = clockCycler(config);
+    const windows = [win(1, 0), win(2, 0), win(3, 0)];
+    assertNull(c.handleScroll({ monitorIndex: 0, direction: 1, delta: 0, windows, focusedId: 3 }));
+});
+
+test('without wrapAround the walk saturates at the start and reports no switch', () => {
+    const config = defaultConfig();
+    config.wrapAround = false;
+    const { c } = clockCycler(config);
+    const windows = [win(1, 0), win(2, 0), win(3, 0)];
+    assertNull(c.handleScroll({ monitorIndex: 0, direction: -1, delta: 0, windows, focusedId: 1 }));
+});
+
+test('without wrapAround the walk still advances away from an edge', () => {
+    const config = defaultConfig();
+    config.wrapAround = false;
+    const { c } = clockCycler(config);
+    const windows = [win(1, 0), win(2, 0), win(3, 0)];
+    assertEqual(c.handleScroll({ monitorIndex: 0, direction: 1, delta: 0, windows, focusedId: 1 }).window.id, 2);
+});
+
+test('invertDirection reverses which way scrolling walks', () => {
+    const config = defaultConfig();
+    config.invertDirection = true;
+    const { c } = clockCycler(config);
+    const windows = [win(1, 0), win(2, 0), win(3, 0)];
+    assertEqual(c.handleScroll({ monitorIndex: 0, direction: 1, delta: 0, windows, focusedId: 2 }).window.id, 1);
+});
