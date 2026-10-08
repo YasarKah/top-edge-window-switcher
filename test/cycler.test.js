@@ -131,14 +131,67 @@ test('the snapshot is frozen: MRU reordering mid-gesture does not change the wal
     assertEqual(c.handleScroll({ monitorIndex: 0, direction: 1, delta: 0, windows: reordered, focusedId: 2 }).window.id, 3);
 });
 
-test('the gesture expires after gestureTimeoutMs and rebuilds from MRU', () => {
+test('after the timeout an unchanged window set keeps its established order', () => {
     const { c, box } = clockCycler();
     const first = [win(1, 0), win(2, 0), win(3, 0)];
     assertEqual(c.handleScroll({ monitorIndex: 0, direction: 1, delta: 0, windows: first, focusedId: 1 }).window.id, 2);
     box.t += 1501;
+    // MRU yeniden dizildi ama pencere KUMESI ayni: sira korunur, yalnizca indeks
+    // odakli pencereye gore yeniden baglanir, boylece yurume ileri devam eder.
     const reordered = [win(2, 0), win(1, 0), win(3, 0)];
-    // Bayat jest: fotograf yeniden kurulur, indeks odakli pencere 2'nin konumu (0) olur.
-    assertEqual(c.handleScroll({ monitorIndex: 0, direction: 1, delta: 0, windows: reordered, focusedId: 2 }).window.id, 1);
+    assertEqual(c.handleScroll({ monitorIndex: 0, direction: 1, delta: 0, windows: reordered, focusedId: 2 }).window.id, 3);
+});
+
+test('after the timeout a changed window set rebuilds the order from MRU', () => {
+    const { c, box } = clockCycler();
+    const first = [win(1, 0), win(2, 0), win(3, 0)];
+    assertEqual(c.handleScroll({ monitorIndex: 0, direction: 1, delta: 0, windows: first, focusedId: 1 }).window.id, 2);
+    box.t += 1501;
+    // Pencere 3 kapandi, 9 acildi -> kume degisti, fotograf MRU sirasindan kurulur.
+    const changed = [win(9, 0), win(2, 0), win(1, 0)];
+    assertEqual(c.handleScroll({ monitorIndex: 0, direction: 1, delta: 0, windows: changed, focusedId: 2 }).window.id, 1);
+});
+
+test('a pause longer than the timeout still walks forward instead of ping-ponging', () => {
+    const { c, box } = clockCycler();
+    let order = [1, 2, 3];
+    let focused = 1;
+    const seen = [];
+    for (let i = 0; i < 3; i++) {
+        const windows = order.map(id => win(id, 0));
+        const r = c.handleScroll({ monitorIndex: 0, direction: 1, delta: 0, windows, focusedId: focused });
+        seen.push(r.window.id);
+        focused = r.window.id;
+        order = [focused, ...order.filter(id => id !== focused)];
+        box.t += 2000;
+    }
+    assertEqual(seen, [2, 3, 1]);
+});
+
+test('a slow smooth scroll stays one gesture and keeps walking forward', () => {
+    const { c, box } = clockCycler();
+    let order = [1, 2, 3];
+    let focused = 1;
+    const seen = [];
+    for (let i = 0; i < 9; i++) {
+        const windows = order.map(id => win(id, 0));
+        const r = c.handleScroll({ monitorIndex: 0, direction: 0, delta: 0.4, windows, focusedId: focused });
+        if (r) {
+            seen.push(r.window.id);
+            focused = r.window.id;
+            order = [focused, ...order.filter(id => id !== focused)];
+        }
+        box.t += 600;
+    }
+    assertEqual(seen, [2, 3, 1]);
+});
+
+test('smooth residue does not survive an idle longer than the timeout', () => {
+    const { c, box } = clockCycler();
+    const windows = [win(1, 0), win(2, 0), win(3, 0)];
+    c.handleScroll({ monitorIndex: 0, direction: 0, delta: 0.9, windows, focusedId: 1 });
+    box.t += 60000;
+    assertNull(c.handleScroll({ monitorIndex: 0, direction: 0, delta: 0.2, windows, focusedId: 1 }));
 });
 
 test('each monitor keeps its own independent gesture', () => {

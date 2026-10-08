@@ -15,7 +15,7 @@ function fakeBridge(options = {}) {
         windows: options.windows ?? [],
 
         strips: [],
-        reactive: new Map(),
+        enabled: new Map(),
         activated: [],
         osd: [],
         panelHandler: null,
@@ -39,8 +39,8 @@ function fakeBridge(options = {}) {
         removeStrip(monitorIndex) {
             this.strips = this.strips.filter(s => s.index !== monitorIndex);
         },
-        setStripReactive(monitorIndex, reactive) {
-            this.reactive.set(monitorIndex, reactive);
+        setStripEnabled(monitorIndex, enabled) {
+            this.enabled.set(monitorIndex, enabled);
         },
         connectPanelScroll(onScroll) {
             this.panelHandler = onScroll;
@@ -158,14 +158,37 @@ test('showOsd false suppresses the OSD but still switches', () => {
     assertEqual(bridge.activated, [42]);
 });
 
-test('the primary strip is reactive only while the panel is hidden', () => {
+test('the primary strip is enabled only while the panel is hidden', () => {
     const bridge = fakeBridge({ isPanelVisible: true });
     const switcher = new Switcher({ bridge, cycler: fakeCycler(null), config: defaults() });
     switcher.enable();
-    assertEqual(bridge.reactive.get(1), false);
+    assertEqual(bridge.enabled.get(1), false);
     bridge.isPanelVisible = false;
     bridge.panelVisibilityHandler();
-    assertEqual(bridge.reactive.get(1), true);
+    assertEqual(bridge.enabled.get(1), true);
+});
+
+test('a failure part way through enable tears down what was already installed', () => {
+    const bridge = fakeBridge();
+    const realAddStrip = bridge.addStrip.bind(bridge);
+    let calls = 0;
+    bridge.addStrip = function (monitor, height, onScroll) {
+        calls++;
+        if (calls === 2)
+            throw new Error('addStrip failed');
+        realAddStrip(monitor, height, onScroll);
+    };
+    const switcher = new Switcher({ bridge, cycler: fakeCycler(null), config: defaults() });
+    let threw = false;
+    try {
+        switcher.enable();
+    } catch (e) {
+        threw = true;
+    }
+    assertTrue(threw, 'enable should rethrow so the shell marks the extension in error');
+    assertEqual(bridge.strips, []);
+    assertTrue(bridge.panelDisconnected);
+    assertTrue(bridge.destroyed);
 });
 
 test('a monitor layout change rebuilds the strips and clears all cycler state', () => {

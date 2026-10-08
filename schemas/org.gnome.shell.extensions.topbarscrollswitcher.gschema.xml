@@ -4,9 +4,9 @@
           path="/org/gnome/shell/extensions/topbarscrollswitcher/">
     <key name="strip-height" type="i">
       <range min="1" max="64"/>
-      <default>20</default>
+      <default>1</default>
       <summary>Trigger strip height in pixels</summary>
-      <description>Height of the invisible scroll-sensitive strip at the top of each monitor.</description>
+      <description>Height of the invisible trigger strip at the top of each monitor. The strip sits in the shell's input region, so this band swallows ALL pointer input - clicks, drags and hovers, not just scroll - and applications never see it. The default of 1 keeps that cost to a single row; the screen's top edge clamps the pointer to it, so throwing the mouse upwards always lands on the strip. Raise it only if you would rather hit the strip without touching the edge, and expect to lose window dragging and clicks in the band.</description>
     </key>
     <key name="include-maximized" type="b">
       <default>true</default>

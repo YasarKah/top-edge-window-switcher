@@ -40,8 +40,11 @@ export default class TopBarScrollSwitcherPrefs extends ExtensionPreferences {
 
         const tuning = new Adw.PreferencesGroup({
             title: 'Tetik alanı ve zamanlama',
-            description: 'Şerit yüksekliği, her monitörün üstünde scroll’a duyarlı bandı belirler. ' +
-                         'Bu bantta uygulamaların kendi scroll’u çalışmaz.',
+            description: 'Şerit, her monitörün üstünde tetikleyici bandı belirler. Bu bant ' +
+                         'Shell’in girdi bölgesinde durduğu için orada yalnızca scroll değil ' +
+                         'tıklama ve sürükleme de uygulamaya ulaşmaz. Varsayılan 1 px bu bedeli ' +
+                         'tek satıra indirir; ekranın üst kenarı imleci oraya kilitlediği için ' +
+                         'fareyi yukarı savurmak her zaman şeride denk gelir.',
         });
         tuning.add(this._spinRow(settings, 'strip-height', 'Şerit yüksekliği (px)', 1, 64, 1));
         tuning.add(this._spinRow(settings, 'gesture-timeout-ms', 'Jest zaman aşımı (ms)', 200, 10000, 100));

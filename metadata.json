@@ -4,6 +4,6 @@
   "uuid": "topbarscrollswitcher@yasarkah.github.com",
   "settings-schema": "org.gnome.shell.extensions.topbarscrollswitcher",
   "gettext-domain": "topbarscrollswitcher",
-  "shell-version": ["46", "47", "48", "49", "50"],
+  "shell-version": ["46"],
   "version": 1
 }
