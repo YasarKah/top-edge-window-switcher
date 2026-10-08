@@ -17,6 +17,7 @@ function fakeBridge(options = {}) {
         strips: [],
         enabled: new Map(),
         activated: [],
+        drags: [],
         osd: [],
         panelHandler: null,
         monitorsChangedHandler: null,
@@ -33,8 +34,14 @@ function fakeBridge(options = {}) {
         showOsd(monitorIndex, window) {
             this.osd.push([monitorIndex, window.id]);
         },
-        addStrip(monitor, height, onScroll) {
-            this.strips.push({ index: monitor.index, height, onScroll });
+        addStrip(monitor, height, handlers) {
+            this.strips.push({ index: monitor.index, height, ...handlers });
+        },
+        listDraggableWindows(monitorIndex) {
+            return (options.draggable ?? {})[monitorIndex] ?? [];
+        },
+        beginWindowDrag(window) {
+            this.drags.push(window.id);
         },
         removeStrip(monitorIndex) {
             this.strips = this.strips.filter(s => s.index !== monitorIndex);
@@ -231,4 +238,60 @@ test('a scroll arriving after disable is ignored', () => {
     switcher.disable();
     assertEqual(strip.onScroll(0, { direction: 1, delta: 0 }), false);
     assertEqual(cycler.calls.length, 0);
+});
+
+
+function pressAt(x, y, button = 1) {
+    return { x, y, button, native: {} };
+}
+
+test('a press over a window begins a drag on it and consumes the event', () => {
+    const bridge = fakeBridge({
+        draggable: { 0: [{ id: 77, frame: { x: 0, y: 0, width: 1920, height: 1080 } }] },
+    });
+    const switcher = new Switcher({ bridge, cycler: fakeCycler(null), config: defaults() });
+    switcher.enable();
+    assertTrue(bridge.strips[0].onButtonPress(0, pressAt(960, 0)));
+    assertEqual(bridge.drags, [77]);
+});
+
+test('a press over no window begins no drag and lets the event through', () => {
+    const bridge = fakeBridge({ draggable: { 0: [] } });
+    const switcher = new Switcher({ bridge, cycler: fakeCycler(null), config: defaults() });
+    switcher.enable();
+    assertEqual(bridge.strips[0].onButtonPress(0, pressAt(960, 0)), false);
+    assertEqual(bridge.drags, []);
+});
+
+test('only the primary button starts a drag', () => {
+    const bridge = fakeBridge({
+        draggable: { 0: [{ id: 77, frame: { x: 0, y: 0, width: 1920, height: 1080 } }] },
+    });
+    const switcher = new Switcher({ bridge, cycler: fakeCycler(null), config: defaults() });
+    switcher.enable();
+    assertEqual(bridge.strips[0].onButtonPress(0, pressAt(960, 0, 3)), false);
+    assertEqual(bridge.drags, []);
+});
+
+test('no drag starts while the shell is blocked', () => {
+    const bridge = fakeBridge({
+        isBlocked: true,
+        draggable: { 0: [{ id: 77, frame: { x: 0, y: 0, width: 1920, height: 1080 } }] },
+    });
+    const switcher = new Switcher({ bridge, cycler: fakeCycler(null), config: defaults() });
+    switcher.enable();
+    assertEqual(bridge.strips[0].onButtonPress(0, pressAt(960, 0)), false);
+    assertEqual(bridge.drags, []);
+});
+
+test('a press arriving after disable is ignored', () => {
+    const bridge = fakeBridge({
+        draggable: { 0: [{ id: 77, frame: { x: 0, y: 0, width: 1920, height: 1080 } }] },
+    });
+    const switcher = new Switcher({ bridge, cycler: fakeCycler(null), config: defaults() });
+    switcher.enable();
+    const strip = bridge.strips[0];
+    switcher.disable();
+    assertEqual(strip.onButtonPress(0, pressAt(960, 0)), false);
+    assertEqual(bridge.drags, []);
 });
