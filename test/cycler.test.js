@@ -100,3 +100,70 @@ test('candidates keeps minimized windows by default', () => {
     const windows = [win(1, 0), win(2, 0, { isMinimized: true })];
     assertEqual(ids(c.candidates(windows, 0)), [1, 2]);
 });
+
+function clockCycler(config = defaultConfig()) {
+    const box = { t: 10000 };
+    const c = new Cycler({ now: () => box.t, config });
+    return { c, box, config };
+}
+
+test('first scroll moves one step from the focused window', () => {
+    const { c } = clockCycler();
+    const windows = [win(1, 0), win(2, 0), win(3, 0)];
+    const r = c.handleScroll({ monitorIndex: 0, direction: 1, delta: 0, windows, focusedId: 1 });
+    assertEqual(r.window.id, 2);
+});
+
+test('scrolling up from the focused window goes the other way', () => {
+    const { c } = clockCycler();
+    const windows = [win(1, 0), win(2, 0), win(3, 0)];
+    const r = c.handleScroll({ monitorIndex: 0, direction: -1, delta: 0, windows, focusedId: 2 });
+    assertEqual(r.window.id, 1);
+});
+
+test('the snapshot is frozen: MRU reordering mid-gesture does not change the walk', () => {
+    const { c, box } = clockCycler();
+    const first = [win(1, 0), win(2, 0), win(3, 0)];
+    assertEqual(c.handleScroll({ monitorIndex: 0, direction: 1, delta: 0, windows: first, focusedId: 1 }).window.id, 2);
+    box.t += 200;
+    // Pencere 2 etkinlestigi icin gercek MRU listesi basa doner; fotograf buna aldirmaz.
+    const reordered = [win(2, 0), win(1, 0), win(3, 0)];
+    assertEqual(c.handleScroll({ monitorIndex: 0, direction: 1, delta: 0, windows: reordered, focusedId: 2 }).window.id, 3);
+});
+
+test('the gesture expires after gestureTimeoutMs and rebuilds from MRU', () => {
+    const { c, box } = clockCycler();
+    const first = [win(1, 0), win(2, 0), win(3, 0)];
+    assertEqual(c.handleScroll({ monitorIndex: 0, direction: 1, delta: 0, windows: first, focusedId: 1 }).window.id, 2);
+    box.t += 1501;
+    const reordered = [win(2, 0), win(1, 0), win(3, 0)];
+    // Bayat jest: fotograf yeniden kurulur, indeks odakli pencere 2'nin konumu (0) olur.
+    assertEqual(c.handleScroll({ monitorIndex: 0, direction: 1, delta: 0, windows: reordered, focusedId: 2 }).window.id, 1);
+});
+
+test('each monitor keeps its own independent gesture', () => {
+    const { c, box } = clockCycler();
+    const windows = [win(1, 0), win(2, 0), win(10, 1), win(20, 1)];
+    assertEqual(c.handleScroll({ monitorIndex: 0, direction: 1, delta: 0, windows, focusedId: 1 }).window.id, 2);
+    box.t += 200;
+    assertEqual(c.handleScroll({ monitorIndex: 1, direction: 1, delta: 0, windows, focusedId: 10 }).window.id, 20);
+});
+
+test('when the focused window is not a candidate the first scroll picks the MRU top', () => {
+    const { c } = clockCycler();
+    const windows = [win(1, 0), win(2, 0), win(99, 1)];
+    const r = c.handleScroll({ monitorIndex: 0, direction: 1, delta: 0, windows, focusedId: 99 });
+    assertEqual(r.window.id, 1);
+});
+
+test('a null focusedId also picks the MRU top on the first scroll', () => {
+    const { c } = clockCycler();
+    const windows = [win(5, 0), win(6, 0)];
+    assertEqual(c.handleScroll({ monitorIndex: 0, direction: -1, delta: 0, windows, focusedId: null }).window.id, 5);
+});
+
+test('fewer than two candidates does nothing', () => {
+    const { c } = clockCycler();
+    assertNull(c.handleScroll({ monitorIndex: 0, direction: 1, delta: 0, windows: [], focusedId: null }));
+    assertNull(c.handleScroll({ monitorIndex: 0, direction: 1, delta: 0, windows: [win(1, 0)], focusedId: 1 }));
+});
