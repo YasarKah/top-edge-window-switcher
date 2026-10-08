@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist>
+  <schema id="org.gnome.shell.extensions.topbarscrollswitcher"
+          path="/org/gnome/shell/extensions/topbarscrollswitcher/">
+    <key name="strip-height" type="i">
+      <range min="1" max="64"/>
+      <default>20</default>
+      <summary>Trigger strip height in pixels</summary>
+      <description>Height of the invisible scroll-sensitive strip at the top of each monitor.</description>
+    </key>
+    <key name="include-maximized" type="b">
+      <default>true</default>
+      <summary>Include maximized windows</summary>
+      <description>Cycle through windows maximized on both axes.</description>
+    </key>
+    <key name="include-fullscreen" type="b">
+      <default>true</default>
+      <summary>Include fullscreen windows</summary>
+      <description>Cycle through genuinely fullscreen windows.</description>
+    </key>
+    <key name="include-minimized" type="b">
+      <default>true</default>
+      <summary>Keep minimized windows in the cycle</summary>
+      <description>When enabled, a minimized window stays in the cycle so scrolling can restore it.</description>
+    </key>
+    <key name="wrap-around" type="b">
+      <default>true</default>
+      <summary>Wrap around at the ends</summary>
+      <description>Continue from the first window after the last one.</description>
+    </key>
+    <key name="gesture-timeout-ms" type="i">
+      <range min="200" max="10000"/>
+      <default>1500</default>
+      <summary>Gesture timeout in milliseconds</summary>
+      <description>Idle time after which the frozen window order is discarded and rebuilt from the most-recently-used order.</description>
+    </key>
+    <key name="switch-debounce-ms" type="i">
+      <range min="0" max="1000"/>
+      <default>120</default>
+      <summary>Minimum milliseconds between switches</summary>
+      <description>Guards against flying past windows when the mouse emits a burst of scroll events.</description>
+    </key>
+    <key name="invert-direction" type="b">
+      <default>false</default>
+      <summary>Invert scroll direction</summary>
+      <description>Swap which direction scrolling up moves through the window list.</description>
+    </key>
+    <key name="show-osd" type="b">
+      <default>true</default>
+      <summary>Show the window title on switch</summary>
+      <description>Display an on-screen label naming the window that was switched to.</description>
+    </key>
+  </schema>
+</schemalist>
