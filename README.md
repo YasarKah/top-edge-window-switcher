@@ -26,10 +26,17 @@ türüne bakmaz: o bantta yalnızca scroll değil **tıklama, sürükleme ve hov
 uygulamaya hiç ulaşmaz. Pratik sonucu: panelsiz (secondary) monitörlerde
 büyütülmüş bir pencereyi en üst satırından tutup taşıyamazsın.
 
-Bu yüzden varsayılan `strip-height` **1 px**'tir — bedel tek satıra iner.
-Ekranın üst kenarı imleci y=0'a kilitlediği için fareyi yukarı savurmak her
-zaman şeride denk gelir, yani 1 px kullanılabilirlikten bir şey götürmez.
-Pencere taşımak isterken en üst satırdan değil, 1-2 piksel aşağıdan tut.
+Bu yüzden iki şey yapılıyor:
+
+1. Varsayılan `strip-height` **1 px**'tir — bedel tek satıra iner. Ekranın üst
+   kenarı imleci y=0'a kilitlediği için fareyi yukarı savurmak her zaman şeride
+   denk gelir, yani 1 px kullanılabilirlikten bir şey götürmez.
+2. Şerit, sol tuş basışını yutmak yerine **altındaki pencerenin taşıma işlemini
+   kendisi başlatır** (`begin_grab_op(MOVING)`). Böylece büyütülmüş bir pencereyi
+   en üst satırından tutup taşımak normal şekilde çalışır.
+
+Bantta hâlâ uygulamaya ulaşmayan şeyler: hover, çift tıklama, sağ tık menüsü ve
+başlık çubuğu düğmeleri — hepsi yalnızca o tek piksel satırında.
 
 Primary monitörde top bar zaten o bandı kapladığından orada bir kayıp yoktur;
 şerit primary'de yalnızca tam ekran bir pencere paneli gizlediğinde görünür
