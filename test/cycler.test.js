@@ -278,3 +278,75 @@ test('debounce never blocks the first scroll of a gesture', () => {
     box.t += 5000;
     assertEqual(c.handleScroll({ monitorIndex: 0, direction: 1, delta: 0, windows, focusedId: 2 }).window.id, 3);
 });
+
+test('a closed window is pruned and the walk continues from where it stood', () => {
+    const { c, box } = clockCycler();
+    const all = [win(1, 0), win(2, 0), win(3, 0), win(4, 0)];
+    assertEqual(c.handleScroll({ monitorIndex: 0, direction: 1, delta: 0, windows: all, focusedId: 1 }).window.id, 2);
+    box.t += 200;
+    // Pencere 1 kapandi; fotograf [2,3,4] olur, uzerinde durulan 2 hayatta, yurume 3'e gider.
+    const after = [win(2, 0), win(3, 0), win(4, 0)];
+    assertEqual(c.handleScroll({ monitorIndex: 0, direction: 1, delta: 0, windows: after, focusedId: 2 }).window.id, 3);
+});
+
+test('a window that left the monitor is pruned from the frozen snapshot', () => {
+    const { c, box } = clockCycler();
+    const all = [win(1, 0), win(2, 0), win(3, 0), win(4, 0)];
+    assertEqual(c.handleScroll({ monitorIndex: 0, direction: 1, delta: 0, windows: all, focusedId: 1 }).window.id, 2);
+    box.t += 200;
+    // Pencere 3 monitor 1'e tasindi; monitor 0'da scroll onu asla etkinlestirmemeli.
+    const moved = [win(1, 0), win(2, 0), win(3, 1), win(4, 0)];
+    assertEqual(c.handleScroll({ monitorIndex: 0, direction: 1, delta: 0, windows: moved, focusedId: 2 }).window.id, 4);
+});
+
+test('pruning below two candidates rebuilds instead of switching blindly', () => {
+    const { c, box } = clockCycler();
+    const all = [win(1, 0), win(2, 0), win(3, 0)];
+    assertEqual(c.handleScroll({ monitorIndex: 0, direction: 1, delta: 0, windows: all, focusedId: 1 }).window.id, 2);
+    box.t += 200;
+    assertNull(c.handleScroll({ monitorIndex: 0, direction: 1, delta: 0, windows: [win(2, 0)], focusedId: 2 }));
+});
+
+test('a settings change mid-gesture rebuilds the snapshot with the new criterion', () => {
+    const { c, box, config } = clockCycler();
+    const all = [win(1, 0), win(2, 0), win(3, 0, { isMaximized: false, isFullscreen: true }), win(4, 0, { isMaximized: false, isFullscreen: true })];
+    assertEqual(c.handleScroll({ monitorIndex: 0, direction: 1, delta: 0, windows: all, focusedId: 1 }).window.id, 2);
+    box.t += 200;
+    config.includeMaximized = false;
+    // Adaylar [3,4]'e duser; uzerinde durulan 2 artik aday degil, fotograf yeniden kurulur.
+    // Odakli pencere 2 de aday olmadigi icin MRU tepesi olan 3 etkinlesir.
+    assertEqual(c.handleScroll({ monitorIndex: 0, direction: 1, delta: 0, windows: all, focusedId: 2 }).window.id, 3);
+});
+
+test('a newly opened window is not added to a frozen snapshot', () => {
+    const { c, box } = clockCycler();
+    const all = [win(1, 0), win(2, 0)];
+    assertEqual(c.handleScroll({ monitorIndex: 0, direction: 1, delta: 0, windows: all, focusedId: 1 }).window.id, 2);
+    box.t += 200;
+    const withNew = [win(9, 0), win(1, 0), win(2, 0)];
+    // Fotograf hala [1,2]; 2'den ileri sarma 1'e doner, yeni 9 jest bitene kadar girmez.
+    assertEqual(c.handleScroll({ monitorIndex: 0, direction: 1, delta: 0, windows: withNew, focusedId: 2 }).window.id, 1);
+});
+
+test('reset(monitorIndex) clears only that monitor', () => {
+    const { c, box } = clockCycler();
+    const windows = [win(1, 0), win(2, 0), win(3, 0), win(10, 1), win(20, 1), win(30, 1)];
+    c.handleScroll({ monitorIndex: 0, direction: 1, delta: 0, windows, focusedId: 1 });
+    c.handleScroll({ monitorIndex: 1, direction: 1, delta: 0, windows, focusedId: 10 });
+    c.reset(0);
+    box.t += 200;
+    // Monitor 0 yeniden kuruldu: odakli 1'den bir adim -> 2.
+    assertEqual(c.handleScroll({ monitorIndex: 0, direction: 1, delta: 0, windows, focusedId: 1 }).window.id, 2);
+    box.t += 200;
+    // Monitor 1'in jesti korundu: 20'de duruyordu, bir adim -> 30.
+    assertEqual(c.handleScroll({ monitorIndex: 1, direction: 1, delta: 0, windows, focusedId: 1 }).window.id, 30);
+});
+
+test('reset() clears every monitor', () => {
+    const { c, box } = clockCycler();
+    const windows = [win(1, 0), win(2, 0), win(3, 0)];
+    c.handleScroll({ monitorIndex: 0, direction: 1, delta: 0, windows, focusedId: 1 });
+    c.reset();
+    box.t += 200;
+    assertEqual(c.handleScroll({ monitorIndex: 0, direction: 1, delta: 0, windows, focusedId: 1 }).window.id, 2);
+});
