@@ -4,7 +4,10 @@ import Adw from 'gi://Adw';
 import Gio from 'gi://Gio';
 import Gtk from 'gi://Gtk';
 
-import { ExtensionPreferences } from 'resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js';
+import {
+    ExtensionPreferences,
+    gettext as _,
+} from 'resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js';
 
 export default class TopEdgeWindowSwitcherPrefs extends ExtensionPreferences {
     fillPreferencesWindow(window) {
@@ -12,69 +15,62 @@ export default class TopEdgeWindowSwitcherPrefs extends ExtensionPreferences {
         const page = new Adw.PreferencesPage();
 
         const which = new Adw.PreferencesGroup({
-            title: 'Hangi pencereler',
-            description: 'Scroll ile aralarında geçiş yapılacak pencereler.',
+            title: _('Which windows'),
+            description: _('The windows a scroll cycles through.'),
         });
         which.add(this._switchRow(settings, 'include-maximized',
-            'Büyütülmüş pencereler',
-            'İki eksende büyütülmüş pencereler döngüye girer.'));
+            _('Maximized windows'),
+            _('Windows maximized on both axes join the cycle.')));
         which.add(this._switchRow(settings, 'include-fullscreen',
-            'Tam ekran pencereler',
-            'Gerçek tam ekran pencereler döngüye girer.'));
+            _('Fullscreen windows'),
+            _('Genuinely fullscreen windows join the cycle.')));
         which.add(this._switchRow(settings, 'include-minimized',
-            'Küçültülmüş pencereler',
-            'Küçültülen pencere döngüde kalır, scroll onu geri çağırır.'));
+            _('Minimized windows'),
+            _('A minimized window stays in the cycle, so scrolling brings it back.')));
         which.add(this._switchRow(settings, 'all-workspaces',
-            'Tüm çalışma alanları',
-            'Kapalıyken yalnızca etkin çalışma alanındaki pencereler. Açıkken '
-            + 'diğer çalışma alanlarına da geçilir.'));
+            _('All workspaces'),
+            _('Off: only windows on the active workspace. On: scrolling reaches windows on other workspaces too.')));
         which.add(this._comboRow(settings, 'window-order',
-            'Geçiş sırası',
-            'Son kullanılan sırası, bir scroll boyunca dondurulur. Sabit sıra '
-            + 'pencerelerin açılış sırasını kullanır, konumlar hiç değişmez.',
+            _('Cycle order'),
+            _('Most recently used, frozen for the duration of one scroll. A stable order follows when each window was opened, so positions never change.'),
             ['mru', 'stable'],
-            ['Son kullanılan', 'Sabit (açılış sırası)']));
+            [_('Most recently used'), _('Stable (open order)')]));
         page.add(which);
 
         const trigger = new Adw.PreferencesGroup({
-            title: 'Tetik alanı',
-            description: 'Şerit, Shell’in girdi bölgesinde durur: bandında scroll '
-                + 'dışındaki tıklama ve sürüklemeler de uygulamaya ulaşmaz. '
-                + 'Varsayılan 1 px bu bedeli tek satıra indirir ve ekranın üst '
-                + 'kenarı imleci oraya kilitlediği için isabet her zaman kolaydır.',
+            title: _('Trigger area'),
+            description: _('The strip sits in the shell’s input region, so inside its band clicks and drags do not reach the application either, not just scroll. The default of 1 px keeps that cost to a single row, and the screen’s top edge clamps the pointer to it so it is always easy to hit.'),
         });
         trigger.add(this._comboRow(settings, 'active-monitors',
-            'Etkin monitörler',
-            'Top bar’da scroll’u zaten kullanan başka bir eklentin varsa '
-            + 'primary’yi dışarıda bırak.',
+            _('Active monitors'),
+            _('Leave the primary monitor out if another extension already uses top bar scrolling.'),
             ['all', 'secondary', 'primary'],
-            ['Tümü', 'Primary dışı', 'Yalnızca primary']));
-        trigger.add(this._spinRow(settings, 'strip-height', 'Şerit yüksekliği (px)', 1, 64, 1));
+            [_('All'), _('Except primary'), _('Primary only')]));
+        trigger.add(this._spinRow(settings, 'strip-height', _('Strip height (px)'), 1, 64, 1));
         trigger.add(this._comboRow(settings, 'required-modifier',
-            'Gerekli tuş',
-            'Seçilirse scroll yalnızca bu tuş basılıyken pencere değiştirir.',
+            _('Required key'),
+            _('When set, scrolling only switches windows while this key is held.'),
             ['none', 'ctrl', 'alt', 'super'],
-            ['Yok', 'Ctrl', 'Alt', 'Super']));
+            [_('None'), _('Ctrl'), _('Alt'), _('Super')]));
         trigger.add(this._switchRow(settings, 'drag-from-strip',
-            'Şeritten pencere sürükle',
-            'Bandda sol tuşa basınca alttaki pencere taşınmaya başlar. Kapalıyken '
-            + 'o bandda tıklamalar tamamen yok sayılır.'));
+            _('Drag windows from the strip'),
+            _('A primary-button press in the band starts dragging the window underneath. Off: clicks in the band are discarded.')));
         page.add(trigger);
 
-        const behaviour = new Adw.PreferencesGroup({ title: 'Davranış' });
+        const behaviour = new Adw.PreferencesGroup({ title: _('Behaviour') });
         behaviour.add(this._switchRow(settings, 'wrap-around',
-            'Sonda başa sar',
-            'Son pencereden sonra ilk pencereye döner.'));
+            _('Wrap around'),
+            _('After the last window, continue from the first.')));
         behaviour.add(this._switchRow(settings, 'invert-direction',
-            'Yönü ters çevir',
-            'Yukarı scroll ile gidilen yönü değiştirir.'));
+            _('Invert direction'),
+            _('Swap which way scrolling up moves through the list.')));
         behaviour.add(this._switchRow(settings, 'show-osd',
-            'Pencere adını göster',
-            'Geçişte pencere başlığını ekranda gösterir.'));
+            _('Show the window name'),
+            _('Display the window title on screen when switching.')));
         behaviour.add(this._spinRow(settings, 'gesture-timeout-ms',
-            'Jest zaman aşımı (ms)', 200, 10000, 100));
+            _('Gesture timeout (ms)'), 200, 10000, 100));
         behaviour.add(this._spinRow(settings, 'switch-debounce-ms',
-            'Geçişler arası en az süre (ms)', 0, 1000, 10));
+            _('Minimum time between switches (ms)'), 0, 1000, 10));
         page.add(behaviour);
 
         window.add(page);
@@ -99,10 +95,10 @@ export default class TopEdgeWindowSwitcherPrefs extends ExtensionPreferences {
         return row;
     }
 
-    // Gio.Settings.bind() bir dizgeyi ComboRow'un tam sayi `selected` ozelligine
-    // baglayamaz, bu yuzden esleme elle yapiliyor. Satir -> ayar yonu yeterli:
-    // pencere acikken ayari baska kimse degistirmez ve boylece pencere
-    // kapandiginda sokulmesi gereken bir sinyal kalmaz.
+    // Gio.Settings.bind() cannot bind a string to ComboRow's integer `selected`,
+    // so the mapping is manual. Row -> setting is enough: nothing else writes
+    // these keys while the window is open, and this leaves no signal to
+    // disconnect when it closes.
     _comboRow(settings, key, title, subtitle, values, labels) {
         const row = new Adw.ComboRow({
             title,

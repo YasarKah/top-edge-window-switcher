@@ -1,0 +1,187 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR Yasar Kahramaner
+# This file is distributed under the same license as the Top Edge Window Switcher package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Top Edge Window Switcher\n"
+"Report-Msgid-Bugs-To: https://github.com/YasarKah/top-edge-window-switcher/"
+"issues\n"
+"POT-Creation-Date: 2026-10-09 13:40+0300\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: prefs.js:18
+msgid "Which windows"
+msgstr ""
+
+#: prefs.js:19
+msgid "The windows a scroll cycles through."
+msgstr ""
+
+#: prefs.js:22
+msgid "Maximized windows"
+msgstr ""
+
+#: prefs.js:23
+msgid "Windows maximized on both axes join the cycle."
+msgstr ""
+
+#: prefs.js:25
+msgid "Fullscreen windows"
+msgstr ""
+
+#: prefs.js:26
+msgid "Genuinely fullscreen windows join the cycle."
+msgstr ""
+
+#: prefs.js:28
+msgid "Minimized windows"
+msgstr ""
+
+#: prefs.js:29
+msgid "A minimized window stays in the cycle, so scrolling brings it back."
+msgstr ""
+
+#: prefs.js:31
+msgid "All workspaces"
+msgstr ""
+
+#: prefs.js:32
+msgid ""
+"Off: only windows on the active workspace. On: scrolling reaches windows on "
+"other workspaces too."
+msgstr ""
+
+#: prefs.js:34
+msgid "Cycle order"
+msgstr ""
+
+#: prefs.js:35
+msgid ""
+"Most recently used, frozen for the duration of one scroll. A stable order "
+"follows when each window was opened, so positions never change."
+msgstr ""
+
+#: prefs.js:37
+msgid "Most recently used"
+msgstr ""
+
+#: prefs.js:37
+msgid "Stable (open order)"
+msgstr ""
+
+#: prefs.js:41
+msgid "Trigger area"
+msgstr ""
+
+#: prefs.js:42
+msgid ""
+"The strip sits in the shell’s input region, so inside its band clicks and "
+"drags do not reach the application either, not just scroll. The default of 1 "
+"px keeps that cost to a single row, and the screen’s top edge clamps the "
+"pointer to it so it is always easy to hit."
+msgstr ""
+
+#: prefs.js:45
+msgid "Active monitors"
+msgstr ""
+
+#: prefs.js:46
+msgid ""
+"Leave the primary monitor out if another extension already uses top bar "
+"scrolling."
+msgstr ""
+
+#: prefs.js:48
+msgid "All"
+msgstr ""
+
+#: prefs.js:48
+msgid "Except primary"
+msgstr ""
+
+#: prefs.js:48
+msgid "Primary only"
+msgstr ""
+
+#: prefs.js:49
+msgid "Strip height (px)"
+msgstr ""
+
+#: prefs.js:51
+msgid "Required key"
+msgstr ""
+
+#: prefs.js:52
+msgid "When set, scrolling only switches windows while this key is held."
+msgstr ""
+
+#: prefs.js:54
+msgid "None"
+msgstr ""
+
+#: prefs.js:54
+msgid "Ctrl"
+msgstr ""
+
+#: prefs.js:54
+msgid "Alt"
+msgstr ""
+
+#: prefs.js:54
+msgid "Super"
+msgstr ""
+
+#: prefs.js:56
+msgid "Drag windows from the strip"
+msgstr ""
+
+#: prefs.js:57
+msgid ""
+"A primary-button press in the band starts dragging the window underneath. "
+"Off: clicks in the band are discarded."
+msgstr ""
+
+#: prefs.js:60
+msgid "Behaviour"
+msgstr ""
+
+#: prefs.js:62
+msgid "Wrap around"
+msgstr ""
+
+#: prefs.js:63
+msgid "After the last window, continue from the first."
+msgstr ""
+
+#: prefs.js:65
+msgid "Invert direction"
+msgstr ""
+
+#: prefs.js:66
+msgid "Swap which way scrolling up moves through the list."
+msgstr ""
+
+#: prefs.js:68
+msgid "Show the window name"
+msgstr ""
+
+#: prefs.js:69
+msgid "Display the window title on screen when switching."
+msgstr ""
+
+#: prefs.js:71
+msgid "Gesture timeout (ms)"
+msgstr ""
+
+#: prefs.js:73
+msgid "Minimum time between switches (ms)"
+msgstr ""
