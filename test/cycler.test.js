@@ -12,6 +12,7 @@ export function defaultConfig() {
         gestureTimeoutMs: 1500,
         switchDebounceMs: 120,
         invertDirection: false,
+        windowOrder: 'mru',
     };
 }
 
@@ -402,4 +403,34 @@ test('reset() clears every monitor', () => {
     c.reset();
     box.t += 200;
     assertEqual(c.handleScroll({ monitorIndex: 0, direction: 1, delta: 0, windows, focusedId: 1 }).window.id, 2);
+});
+
+
+test('stable order cycles by the order windows were opened, not by MRU', () => {
+    const config = defaultConfig();
+    config.windowOrder = 'stable';
+    const { c } = clockCycler(config);
+    // MRU sirasi 3,1,2 ama acilis sirasi 1 < 2 < 3
+    const windows = [win(3, 0, { stableSequence: 30 }),
+                     win(1, 0, { stableSequence: 10 }),
+                     win(2, 0, { stableSequence: 20 })];
+    assertEqual(c.handleScroll({ monitorIndex: 0, direction: 1, delta: 0, windows, focusedId: 1 }).window.id, 2);
+});
+
+test('stable order reaches the last opened window by wrapping from the first', () => {
+    const config = defaultConfig();
+    config.windowOrder = 'stable';
+    const { c } = clockCycler(config);
+    const windows = [win(3, 0, { stableSequence: 30 }),
+                     win(1, 0, { stableSequence: 10 }),
+                     win(2, 0, { stableSequence: 20 })];
+    assertEqual(c.handleScroll({ monitorIndex: 0, direction: -1, delta: 0, windows, focusedId: 1 }).window.id, 3);
+});
+
+test('mru order is the default and follows the order it was given', () => {
+    const { c } = clockCycler();
+    const windows = [win(3, 0, { stableSequence: 30 }),
+                     win(1, 0, { stableSequence: 10 }),
+                     win(2, 0, { stableSequence: 20 })];
+    assertEqual(c.handleScroll({ monitorIndex: 0, direction: 1, delta: 0, windows, focusedId: 3 }).window.id, 1);
 });

@@ -15,9 +15,10 @@ export default class TopBarScrollSwitcherExtension extends Extension {
         this._syncConfig();
 
         this._settingsId = this._settings.connect('changed', () => {
-            const previousHeight = this._config.stripHeight;
+            const before = `${this._config.stripHeight}|${this._config.activeMonitors}`;
             this._syncConfig();
-            if (this._config.stripHeight !== previousHeight)
+            const after = `${this._config.stripHeight}|${this._config.activeMonitors}`;
+            if (after !== before)
                 this._switcher?.refresh();
         });
 
@@ -60,5 +61,10 @@ export default class TopBarScrollSwitcherExtension extends Extension {
         config.switchDebounceMs = settings.get_int('switch-debounce-ms');
         config.invertDirection = settings.get_boolean('invert-direction');
         config.showOsd = settings.get_boolean('show-osd');
+        config.activeMonitors = settings.get_string('active-monitors');
+        config.allWorkspaces = settings.get_boolean('all-workspaces');
+        config.windowOrder = settings.get_string('window-order');
+        config.requiredModifier = settings.get_string('required-modifier');
+        config.dragFromStrip = settings.get_boolean('drag-from-strip');
     }
 }
