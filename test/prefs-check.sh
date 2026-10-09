@@ -9,13 +9,31 @@ trap 'rm -rf "$TMP"' EXIT
 
 # ExtensionPreferences yalnizca Shell'in prefs surecinde var; o resource yoluna
 # bir stub kaydedip asil prefs.js'i import ediyoruz.
+#
+# TUZAK: stub'i prefs.js'in import ettigi yola kaydetmek testi HER ZAMAN yesil
+# yapar, yol yanlis olsa bile -- bu bir kere gercekten oldu ve prefs penceresi
+# canlida ImportError ile acilmadi. Bu yuzden once yolu GNOME'un KENDI paket
+# eklentilerine karsi dogruluyoruz; onlar calistigi bilinen yer gercegidir.
+EXPECTED='resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js'
+USED=$(grep -oh "resource:[^']*" "$REPO/prefs.js" | head -1)
+if [ "$USED" != "$EXPECTED" ]; then
+    echo "HATA: prefs.js '$USED' import ediyor, beklenen '$EXPECTED'" >&2
+    exit 1
+fi
+REF=$(grep -rhoh "resource:[^']*prefs.js" \
+        /usr/share/gnome-shell/extensions/*/prefs.js 2>/dev/null | sort -u | head -1)
+if [ -n "$REF" ] && [ "$REF" != "$EXPECTED" ]; then
+    echo "HATA: GNOME'un kendi eklentileri '$REF' kullaniyor, biz '$EXPECTED'" >&2
+    exit 1
+fi
+echo "ok   import yolu GNOME'un kendi eklentileriyle ayni: ${REF:-(paket eklentisi yok, yalnizca sabit dogrulandi)}"
 mkdir -p "$TMP/stub"
-printf 'export class ExtensionPreferences {}\n' > "$TMP/stub/extensionPreferences.js"
+printf 'export class ExtensionPreferences {}\n' > "$TMP/stub/prefs.js"
 cat > "$TMP/stub.gresource.xml" <<'XML'
 <?xml version="1.0" encoding="UTF-8"?>
 <gresources>
-  <gresource prefix="/org/gnome/Shell/Extensions/js">
-    <file>extensionPreferences.js</file>
+  <gresource prefix="/org/gnome/Shell/Extensions/js/extensions">
+    <file>prefs.js</file>
   </gresource>
 </gresources>
 XML
