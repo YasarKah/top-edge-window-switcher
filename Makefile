@@ -1,7 +1,7 @@
 UUID   = top-edge-window-switcher@yasarkah.github.io
 EXTDIR = $(HOME)/.local/share/gnome-shell/extensions/$(UUID)
 
-.PHONY: test prefs-check i18n-check check schemas install uninstall log zip pot po mo
+.PHONY: test prefs-check i18n-check check schemas install uninstall log zip pot po mo shexli
 
 test:
 	gjs -m test/run.js
@@ -73,3 +73,14 @@ mo:
 # Her .po dosyasinda eksik/fuzzy ceviri var mi ve .mo gercekten yukleniyor mu.
 i18n-check: mo
 	./test/i18n-check.sh
+
+# extensions.gnome.org'un statik analiz araci. Hedef KLASOR degil ZIP olmali:
+# klasorde .git/, Makefile, test/ ve po/ gibi pakete hic girmeyen dosyalar
+# bulgu uretir. Kurulu degilse atlar.
+#   pip install -U shexli
+shexli: zip
+	@if command -v shexli >/dev/null 2>&1; then \
+		shexli dist/$(UUID).shell-extension.zip; \
+	else \
+		echo "shexli kurulu degil, atlandi (pip install -U shexli)"; \
+	fi
