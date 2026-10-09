@@ -58,6 +58,19 @@ atlıyor.
 
     gnome-extensions prefs top-edge-window-switcher@yasarkah.github.io
 
+## Çeviri
+
+Kaynak dil İngilizce, çeviriler `po/` altında. Yeni dil eklemek için:
+
+    msginit --input=po/top-edge-window-switcher.pot --locale=de --output=po/de.po
+    # po/de.po dosyasını çevir
+    make check      # eksik/fuzzy çeviri varsa ve POT eskiyse düşer
+
+Arayüz dizgelerini değiştirdikten sonra `make pot && make po` ile katalogları
+tazele. `make mo` derlenmiş `.mo` dosyalarını `locale/` altına üretir; `make
+install` ve `make zip` bunu kendiliğinden yapar. Paket yalnızca derlenmiş
+`.mo`'ları içerir, `.po`/`.pot` kaynakları depoda kalır.
+
 ## Paketleme
 
     make zip

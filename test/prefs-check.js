@@ -1,10 +1,12 @@
 import Gio from 'gi://Gio';
+import Gettext from 'gettext';
 import Gtk from 'gi://Gtk?version=4.0';
 import Adw from 'gi://Adw?version=1';
 
 const [stubPath, repoPath] = ARGV;
 
 Gio.resources_register(Gio.resource_load(stubPath));
+Gettext.bindtextdomain('top-edge-window-switcher', `${repoPath}/locale`);
 Gtk.init();
 
 const mod = await import(`file://${repoPath}/prefs.js`);

@@ -1,0 +1,133 @@
+# Turkish translation for Top Edge Window Switcher.
+# Copyright (C) 2026 Yasar Kahramaner
+# This file is distributed under the same license as the extension.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Top Edge Window Switcher\n"
+"Report-Msgid-Bugs-To: https://github.com/YasarKah/top-edge-window-switcher/issues\n"
+"PO-Revision-Date: 2026-10-09\n"
+"Last-Translator: Yasar Kahramaner\n"
+"Language-Team: Turkish\n"
+"Language: tr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Which windows"
+msgstr "Hangi pencereler"
+
+msgid "The windows a scroll cycles through."
+msgstr "Scroll ile aralarında geçiş yapılacak pencereler."
+
+msgid "Maximized windows"
+msgstr "Büyütülmüş pencereler"
+
+msgid "Windows maximized on both axes join the cycle."
+msgstr "İki eksende büyütülmüş pencereler döngüye girer."
+
+msgid "Fullscreen windows"
+msgstr "Tam ekran pencereler"
+
+msgid "Genuinely fullscreen windows join the cycle."
+msgstr "Gerçek tam ekran pencereler döngüye girer."
+
+msgid "Minimized windows"
+msgstr "Küçültülmüş pencereler"
+
+msgid "A minimized window stays in the cycle, so scrolling brings it back."
+msgstr "Küçültülen pencere döngüde kalır, scroll onu geri çağırır."
+
+msgid "All workspaces"
+msgstr "Tüm çalışma alanları"
+
+msgid "Off: only windows on the active workspace. On: scrolling reaches windows on other workspaces too."
+msgstr "Kapalıyken yalnızca etkin çalışma alanındaki pencereler. Açıkken diğer çalışma alanlarındaki pencerelere de ulaşılır."
+
+msgid "Cycle order"
+msgstr "Geçiş sırası"
+
+msgid "Most recently used, frozen for the duration of one scroll. A stable order follows when each window was opened, so positions never change."
+msgstr "Son kullanılan sırası, bir scroll boyunca dondurulur. Sabit sıra pencerelerin açılış sırasını izler, konumlar hiç değişmez."
+
+msgid "Most recently used"
+msgstr "Son kullanılan"
+
+msgid "Stable (open order)"
+msgstr "Sabit (açılış sırası)"
+
+msgid "Trigger area"
+msgstr "Tetik alanı"
+
+msgid "The strip sits in the shell’s input region, so inside its band clicks and drags do not reach the application either, not just scroll. The default of 1 px keeps that cost to a single row, and the screen’s top edge clamps the pointer to it so it is always easy to hit."
+msgstr "Şerit, Shell’in girdi bölgesinde durur: bandının içinde yalnızca scroll değil, tıklama ve sürüklemeler de uygulamaya ulaşmaz. Varsayılan 1 px bu bedeli tek satıra indirir; ekranın üst kenarı imleci oraya kilitlediği için isabet her zaman kolaydır."
+
+msgid "Active monitors"
+msgstr "Etkin monitörler"
+
+msgid "Leave the primary monitor out if another extension already uses top bar scrolling."
+msgstr "Top bar’da scroll’u zaten kullanan başka bir eklentin varsa primary’yi dışarıda bırak."
+
+msgid "All"
+msgstr "Tümü"
+
+msgid "Except primary"
+msgstr "Primary dışı"
+
+msgid "Primary only"
+msgstr "Yalnızca primary"
+
+msgid "Strip height (px)"
+msgstr "Şerit yüksekliği (px)"
+
+msgid "Required key"
+msgstr "Gerekli tuş"
+
+msgid "When set, scrolling only switches windows while this key is held."
+msgstr "Seçilirse scroll yalnızca bu tuş basılıyken pencere değiştirir."
+
+msgid "None"
+msgstr "Yok"
+
+msgid "Ctrl"
+msgstr "Ctrl"
+
+msgid "Alt"
+msgstr "Alt"
+
+msgid "Super"
+msgstr "Super"
+
+msgid "Drag windows from the strip"
+msgstr "Şeritten pencere sürükle"
+
+msgid "A primary-button press in the band starts dragging the window underneath. Off: clicks in the band are discarded."
+msgstr "Bantta sol tuşa basınca alttaki pencere taşınmaya başlar. Kapalıyken bantta tıklamalar yok sayılır."
+
+msgid "Behaviour"
+msgstr "Davranış"
+
+msgid "Wrap around"
+msgstr "Sonda başa sar"
+
+msgid "After the last window, continue from the first."
+msgstr "Son pencereden sonra ilk pencereye döner."
+
+msgid "Invert direction"
+msgstr "Yönü ters çevir"
+
+msgid "Swap which way scrolling up moves through the list."
+msgstr "Yukarı scroll ile listede gidilen yönü değiştirir."
+
+msgid "Show the window name"
+msgstr "Pencere adını göster"
+
+msgid "Display the window title on screen when switching."
+msgstr "Geçişte pencere başlığını ekranda gösterir."
+
+msgid "Gesture timeout (ms)"
+msgstr "Jest zaman aşımı (ms)"
+
+msgid "Minimum time between switches (ms)"
+msgstr "Geçişler arası en az süre (ms)"

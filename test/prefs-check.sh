@@ -28,7 +28,16 @@ if [ -n "$REF" ] && [ "$REF" != "$EXPECTED" ]; then
 fi
 echo "ok   import yolu GNOME'un kendi eklentileriyle ayni: ${REF:-(paket eklentisi yok, yalnizca sabit dogrulandi)}"
 mkdir -p "$TMP/stub"
-printf 'export class ExtensionPreferences {}\n' > "$TMP/stub/prefs.js"
+# Stub, asil prefs.js'in import ettigi her seyi saglamali: sinif ve gettext.
+# gettext'i gercek katalogdan okutuyoruz, boylece bu kontrol ayni zamanda
+# cevirinin prefs.js icinden de calistigini gosterir.
+cat > "$TMP/stub/prefs.js" <<'STUB'
+import Gettext from 'gettext';
+export class ExtensionPreferences {}
+export function gettext(str) {
+    return Gettext.dgettext('top-edge-window-switcher', str);
+}
+STUB
 cat > "$TMP/stub.gresource.xml" <<'XML'
 <?xml version="1.0" encoding="UTF-8"?>
 <gresources>

@@ -3,6 +3,9 @@
   "description": "Scroll at the top edge of any monitor to cycle through the windows that fill that monitor.\n\nEach monitor keeps its own list, so scrolling at the top of your left screen switches the windows on your left screen and nothing else. On the primary monitor the trigger is the top bar itself; on the others it is an invisible strip at the same height, which keeps working even over a fullscreen window.\n\n* Cycles maximized and fullscreen windows, each configurable\n* Most-recently-used order, frozen for the duration of a scroll so repeated scrolling walks the list instead of flipping between two windows\n* Optional on-screen label naming the window you land on\n* Minimized windows can stay in the cycle so scrolling brings them back\n\nThe trigger strip occupies the top row of each monitor and sits in the shell's input region, so clicks there do not reach the application. The strip hands primary-button presses back by starting a window drag, so dragging a window from the top edge still works.",
   "uuid": "top-edge-window-switcher@yasarkah.github.io",
   "settings-schema": "org.gnome.shell.extensions.top-edge-window-switcher",
-  "shell-version": ["46"],
+  "gettext-domain": "top-edge-window-switcher",
+  "shell-version": [
+    "46"
+  ],
   "url": "https://github.com/YasarKah/top-edge-window-switcher"
 }
