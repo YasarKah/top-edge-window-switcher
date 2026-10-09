@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schemalist>
-  <schema id="org.gnome.shell.extensions.topbarscrollswitcher"
-          path="/org/gnome/shell/extensions/topbarscrollswitcher/">
+  <schema id="org.gnome.shell.extensions.top-edge-window-switcher"
+          path="/org/gnome/shell/extensions/top-edge-window-switcher/">
     <key name="strip-height" type="i">
       <range min="1" max="64"/>
       <default>1</default>
