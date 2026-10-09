@@ -18,6 +18,7 @@ function fakeBridge(options = {}) {
         enabled: new Map(),
         activated: [],
         drags: [],
+        listWindowsArgs: [],
         osd: [],
         panelHandler: null,
         monitorsChangedHandler: null,
@@ -25,7 +26,8 @@ function fakeBridge(options = {}) {
         destroyed: false,
         panelDisconnected: false,
 
-        listWindows() {
+        listWindows(allWorkspaces) {
+            this.listWindowsArgs.push(allWorkspaces);
             return this.windows;
         },
         activateWindow(window) {
@@ -84,7 +86,14 @@ function fakeCycler(result) {
 }
 
 function defaults() {
-    return { stripHeight: 20, showOsd: true };
+    return {
+        stripHeight: 20,
+        showOsd: true,
+        activeMonitors: 'all',
+        allWorkspaces: false,
+        requiredModifier: 'none',
+        dragFromStrip: true,
+    };
 }
 
 test('enable installs one strip per monitor at the configured height', () => {
@@ -293,5 +302,81 @@ test('a press arriving after disable is ignored', () => {
     const strip = bridge.strips[0];
     switcher.disable();
     assertEqual(strip.onButtonPress(0, pressAt(960, 0)), false);
+    assertEqual(bridge.drags, []);
+});
+
+
+test('the secondary scope leaves the primary monitor alone', () => {
+    const bridge = fakeBridge();
+    const config = defaults();
+    config.activeMonitors = 'secondary';
+    const switcher = new Switcher({ bridge, cycler: fakeCycler(null), config });
+    switcher.enable();
+    assertEqual(bridge.strips.map(s => s.index), [0]);
+});
+
+test('the secondary scope ignores scroll coming from the primary top bar', () => {
+    const bridge = fakeBridge();
+    const cycler = fakeCycler({ window: { id: 1 } });
+    const config = defaults();
+    config.activeMonitors = 'secondary';
+    const switcher = new Switcher({ bridge, cycler, config });
+    switcher.enable();
+    assertEqual(bridge.panelHandler(1, { direction: 1, delta: 0 }), false);
+    assertEqual(cycler.calls.length, 0);
+});
+
+test('the primary scope installs a strip only on the primary monitor', () => {
+    const bridge = fakeBridge();
+    const config = defaults();
+    config.activeMonitors = 'primary';
+    const switcher = new Switcher({ bridge, cycler: fakeCycler(null), config });
+    switcher.enable();
+    assertEqual(bridge.strips.map(s => s.index), [1]);
+});
+
+test('a required modifier blocks the scroll while it is not held', () => {
+    const bridge = fakeBridge();
+    const cycler = fakeCycler({ window: { id: 1 } });
+    const config = defaults();
+    config.requiredModifier = 'ctrl';
+    const switcher = new Switcher({ bridge, cycler, config });
+    switcher.enable();
+    const scroll = { direction: 1, delta: 0, modifiers: { ctrl: false, alt: false, super: false } };
+    assertEqual(bridge.strips[0].onScroll(0, scroll), false);
+    assertEqual(cycler.calls.length, 0);
+});
+
+test('a required modifier lets the scroll through while it is held', () => {
+    const bridge = fakeBridge();
+    const cycler = fakeCycler({ window: { id: 9 } });
+    const config = defaults();
+    config.requiredModifier = 'ctrl';
+    const switcher = new Switcher({ bridge, cycler, config });
+    switcher.enable();
+    const scroll = { direction: 1, delta: 0, modifiers: { ctrl: true, alt: false, super: false } };
+    assertTrue(bridge.strips[0].onScroll(0, scroll));
+    assertEqual(bridge.activated, [9]);
+});
+
+test('the workspace setting reaches the window listing', () => {
+    const bridge = fakeBridge();
+    const config = defaults();
+    config.allWorkspaces = true;
+    const switcher = new Switcher({ bridge, cycler: fakeCycler(null), config });
+    switcher.enable();
+    bridge.strips[0].onScroll(0, { direction: 1, delta: 0 });
+    assertEqual(bridge.listWindowsArgs, [true]);
+});
+
+test('turning off drag-from-strip makes a press do nothing', () => {
+    const bridge = fakeBridge({
+        draggable: { 0: [{ id: 77, frame: { x: 0, y: 0, width: 1920, height: 1080 } }] },
+    });
+    const config = defaults();
+    config.dragFromStrip = false;
+    const switcher = new Switcher({ bridge, cycler: fakeCycler(null), config });
+    switcher.enable();
+    assertEqual(bridge.strips[0].onButtonPress(0, { x: 960, y: 0, button: 1, native: {} }), false);
     assertEqual(bridge.drags, []);
 });

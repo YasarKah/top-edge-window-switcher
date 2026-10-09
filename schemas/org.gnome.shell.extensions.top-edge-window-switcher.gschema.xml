@@ -50,5 +50,45 @@
       <summary>Show the window title on switch</summary>
       <description>Display an on-screen label naming the window that was switched to.</description>
     </key>
-  </schema>
+      <key name="active-monitors" type="s">
+      <choices>
+        <choice value="all"/>
+        <choice value="secondary"/>
+        <choice value="primary"/>
+      </choices>
+      <default>"all"</default>
+      <summary>Which monitors the trigger is active on</summary>
+      <description>"all" uses every monitor. "secondary" leaves the primary monitor's top bar alone, which is useful when another extension already handles scrolling there. "primary" uses only the top bar.</description>
+    </key>
+    <key name="all-workspaces" type="b">
+      <default>false</default>
+      <summary>Include windows from every workspace</summary>
+      <description>When off, only windows on the active workspace are cycled. When on, scrolling reaches windows on other workspaces too and switching to one follows it there.</description>
+    </key>
+    <key name="window-order" type="s">
+      <choices>
+        <choice value="mru"/>
+        <choice value="stable"/>
+      </choices>
+      <default>"mru"</default>
+      <summary>The order windows are cycled in</summary>
+      <description>"mru" starts from the most recently used window, frozen for the duration of a scroll. "stable" uses a fixed order based on when each window was opened, so a given window always sits in the same place.</description>
+    </key>
+    <key name="required-modifier" type="s">
+      <choices>
+        <choice value="none"/>
+        <choice value="ctrl"/>
+        <choice value="alt"/>
+        <choice value="super"/>
+      </choices>
+      <default>"none"</default>
+      <summary>Modifier key that must be held</summary>
+      <description>Require a modifier before a scroll switches windows, so brushing the top edge does nothing on its own. Note that the strip still consumes the scroll, so an unmodified scroll in the band reaches neither this extension nor the application.</description>
+    </key>
+    <key name="drag-from-strip" type="b">
+      <default>true</default>
+      <summary>Start a window drag from the strip</summary>
+      <description>The strip sits in the shell's input region, so a click in its band cannot reach the application. With this on, a primary-button press in the band starts dragging the window underneath instead of being discarded. Turn it off if you would rather the band ignore clicks entirely.</description>
+    </key>
+</schema>
 </schemalist>
