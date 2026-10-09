@@ -132,6 +132,14 @@ make zip
 Produces an archive under `dist/` ready for extensions.gnome.org, containing
 runtime files only.
 
+```sh
+make shexli
+```
+
+Runs extensions.gnome.org's static analysis tool over that archive. Point it at
+the zip, not the source folder: the folder contains `.git/`, `Makefile`,
+`test/` and `po/`, none of which are shipped, and all of which it reports.
+
 ## License
 
 GPL-2.0-or-later. See `NOTICE` for third-party attribution.
