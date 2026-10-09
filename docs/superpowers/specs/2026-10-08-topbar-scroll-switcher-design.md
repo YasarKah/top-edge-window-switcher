@@ -1,5 +1,11 @@
 # Top Bar Scroll Switcher — Tasarım Belgesi
 
+> **Not (9 Eki 2026):** Proje extensions.gnome.org'a yüklenmek üzere
+> **Top Edge Window Switcher** olarak yeniden adlandırıldı; UUID
+> `top-edge-window-switcher@yasarkah.github.io`, şema
+> `org.gnome.shell.extensions.top-edge-window-switcher`. Aşağıdaki eski adlar
+> tarihsel kayıttır, güncel değildir.
+
 - Tarih: 2026-10-08
 - UUID: `topbarscrollswitcher@yasarkah.github.com`
 - Hedef: GNOME Shell 46–50 (geliştirme ortamı: GNOME Shell 46.0, X11)

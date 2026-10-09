@@ -1,0 +1,23 @@
+Top Edge Window Switcher
+Copyright (C) 2026 Yasar Kahramaner
+
+This program is free software; you can redistribute it and/or modify it under
+the terms of the GNU General Public License as published by the Free Software
+Foundation; either version 2 of the License, or (at your option) any later
+version. See LICENSE for the full text.
+
+Third-party attribution
+-----------------------
+
+lib/shell.js, beginWindowDrag(): the argument list passed to
+Meta.Window.begin_grab_op() differs across Mutter versions. The working form
+used here was taken from Dash to Panel (panel.js), by Jason DeRose and
+contributors, licensed GPL-2.0-or-later:
+
+    https://github.com/home-sweet-gnome/dash-to-panel
+
+Only that call shape was reused. The surrounding window-picking logic in
+lib/pick.js is this project's own and deliberately differs: Dash to Panel tests
+the pointer against a window's frame with a strict greater-than, which excludes
+a window whose frame starts at y=0; this project includes that edge, because a
+maximized window on a monitor without a panel starts exactly there.

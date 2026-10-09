@@ -14,7 +14,7 @@ if (typeof Cls !== 'function')
 
 const source = Gio.SettingsSchemaSource.new_from_directory(
     `${repoPath}/schemas`, null, true);
-const schema = source.lookup('org.gnome.shell.extensions.topbarscrollswitcher', true);
+const schema = source.lookup('org.gnome.shell.extensions.top-edge-window-switcher', true);
 if (!schema)
     throw new Error('sema bulunamadi');
 const settings = new Gio.Settings({ settings_schema: schema });

@@ -1,5 +1,11 @@
 # Top Bar Scroll Switcher Implementation Plan
 
+> **Not (9 Eki 2026):** Proje extensions.gnome.org'a yüklenmek üzere
+> **Top Edge Window Switcher** olarak yeniden adlandırıldı; UUID
+> `top-edge-window-switcher@yasarkah.github.io`, şema
+> `org.gnome.shell.extensions.top-edge-window-switcher`. Aşağıdaki eski adlar
+> tarihsel kayıttır, güncel değildir.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Mouse imleci bir monitörün üst şeridinde iken scroll yapmak, o monitörün çalışma alanını kaplayan pencereler arasında geçiş yapar.

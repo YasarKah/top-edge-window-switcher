@@ -1,14 +1,17 @@
-# Top Bar Scroll Switcher
+# Top Edge Window Switcher
 
-GNOME Shell eklentisi. Mouse imleci bir monitörün en üst şeridinde iken scroll
-yapmak, o monitörün çalışma alanını kaplayan pencereler (maximized ve gerçek
-fullscreen) arasında geçiş yapar. Çoklu monitör destekler: her monitör kendi
-pencere listesine sahiptir.
+GNOME Shell eklentisi. Bir monitörün **üst kenarında** scroll yapmak, o monitörü
+kaplayan pencereler (büyütülmüş ve gerçek tam ekran) arasında geçiş yapar.
+
+Her monitörün kendi listesi vardır: sol ekranın üstünde scroll yapmak sol ekranın
+pencerelerini değiştirir, başka hiçbir şeyi etkilemez. Primary monitörde tetik
+doğrudan top bar'dır; diğerlerinde aynı yükseklikteki görünmez bir şerittir ve bu
+şerit tam ekran bir pencerenin üstünde de çalışmaya devam eder.
 
 ## Kurulum
 
     make install
-    gnome-extensions enable topbarscrollswitcher@yasarkah.github.com
+    gnome-extensions enable top-edge-window-switcher@yasarkah.github.io
 
 Ardından Shell'i yeniden yükle: Alt+F2 → `r` → Enter (X11). Wayland'de oturumu
 yeniden açmak gerekir.
@@ -53,4 +56,15 @@ atlıyor.
 
 ## Ayarlar
 
-    gnome-extensions prefs topbarscrollswitcher@yasarkah.github.com
+    gnome-extensions prefs top-edge-window-switcher@yasarkah.github.io
+
+## Paketleme
+
+    make zip
+
+`dist/` altında extensions.gnome.org'a yüklenebilir bir arşiv üretir; yalnızca
+çalışma zamanı dosyalarını içerir (test, docs ve Makefile girmez).
+
+## Lisans
+
+GPL-2.0-or-later. Üçüncü taraf atıfları için `NOTICE` dosyasına bak.
